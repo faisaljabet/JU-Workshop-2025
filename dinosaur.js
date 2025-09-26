@@ -124,7 +124,9 @@ function checkCollision() {
     if (treeRight-dinoLeft > 5 && dinoRight-treeLeft > 5 && 
         treeBottom-dinoTop > 5 && dinoBottom-treeTop > 5) {
       //call the correct function here
+
       endGame()
+
     }
   }, 20);
 }
@@ -134,4 +136,8 @@ function endGame() {
   stopRunAnimation();
 }
 
+
+
+
 checkCollision();
+
