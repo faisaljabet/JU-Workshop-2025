@@ -11,6 +11,8 @@ let runIntervalId = null;
 let verticalVelocity = 0;
 let groundOffset = 0;
 let gameOver = false;
+let score = 0;
+let scoreIntervalId = null;
 
 // Handle jump
 document.addEventListener("keydown", function(event) {
@@ -123,7 +125,7 @@ function checkCollision() {
     // Check if dino and tree overlap
     if (treeRight-dinoLeft > 5 && dinoRight-treeLeft > 5 && 
         treeBottom-dinoTop > 5 && dinoBottom-treeTop > 5) {
-      //call the correct function here
+      endGame();
     }
   }, 20);
 }
@@ -131,6 +133,58 @@ function checkCollision() {
 function endGame() {
   gameOver = true;
   stopRunAnimation();
+  stopScore();
+  runSpeed = 5;
+  
+  // Show game over text
+  const gameOverText = document.createElement("div");
+  gameOverText.textContent = "GAME OVER!";
+  gameOverText.style.position = "absolute";
+  gameOverText.style.top = "50%";
+  gameOverText.style.left = "50%";
+  gameOverText.style.transform = "translate(-50%, -50%)";
+  gameOverText.style.zIndex = "1000";
+  game.appendChild(gameOverText);
+}
+
+// Score system
+function startScore() {
+  if (scoreIntervalId !== null) return;
+  scoreIntervalId = setInterval(() => {
+    if (gameOver) return;
+    
+    score += 1;
+    updateScoreDisplay();
+  }, 100); // 0.1 seconds = 100ms
+}
+
+function stopScore() {
+  if (scoreIntervalId !== null) {
+    clearInterval(scoreIntervalId);
+    scoreIntervalId = null;
+  }
+}
+
+function updateScoreDisplay() {
+  let scoreElement = document.getElementById("score");
+  if (!scoreElement) {
+    scoreElement = document.createElement("div");
+    scoreElement.id = "score";
+    scoreElement.style.position = "absolute";
+    scoreElement.style.top = "10px";
+    scoreElement.style.right = "10px";
+    scoreElement.style.fontSize = "12px";
+    scoreElement.style.zIndex = "1000";
+    game.appendChild(scoreElement);
+  }
+  scoreElement.textContent = "Score: " + score;
+  
+  // Increase speed every 100 points
+  const newSpeed = 5 + Math.floor(score / 100);
+  if (newSpeed > runSpeed) {
+    runSpeed = newSpeed;
+  }
 }
 
 checkCollision();
+startScore();
