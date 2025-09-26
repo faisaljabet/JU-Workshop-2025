@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+    font-family: sans-serif;
+  }
+  
+  #game {
+    position: relative;
+    width: 600px;
+    height: 200px;
+    border: 2px solid #333;
+    overflow: hidden;
+    background-color: #fff;
+    background-image: url("images/ground.png");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+  }
+  
+  #dino {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    width: 44px;
+    height: 48px;
+    background-image: url("images/dino_run_1.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: left bottom;
+  }
+  
+  #tree {
+    position: absolute;
+    bottom: 0;
+    left: 600px;
+    width: 24px;
+    height: 50px;
+    background-image: url("images/tree.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: left bottom;
+  }
+  
+  /* Run frame classes (toggled via JS) */
+  #dino.run1 { background-image: url("images/dino_run_1.png"); }
+  #dino.run2 { background-image: url("images/dino_run_2.png"); }
+  
