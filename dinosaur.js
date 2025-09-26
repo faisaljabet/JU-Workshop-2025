@@ -13,6 +13,8 @@ let groundOffset = 0;
 let gameOver = false;
 let score = 0;
 let scoreIntervalId = null;
+let isNightMode = false;
+let lastCycleScore = 0;
 
 // Handle jump
 document.addEventListener("keydown", function(event) {
@@ -179,11 +181,34 @@ function updateScoreDisplay() {
   }
   scoreElement.textContent = "Score: " + score;
   
-  // Increase speed every 100 points
-  const newSpeed = 5 + Math.floor(score / 100);
-  if (newSpeed > runSpeed) {
-    runSpeed = newSpeed;
+  // Set speed based on score (5 + 1 for every 100 points)
+  runSpeed = 5 + Math.floor(score / 100);
+
+  checkDayNightCycle();
+}
+
+
+function toggleDayNightCycle() {
+  isNightMode = !isNightMode;
+  lastCycleScore = score;
+
+  // Apply smooth transition
+  const gameElement = document.getElementById("game");
+
+  if (isNightMode) {
+    // Transition to night mode (negative colors)
+    gameElement.style.filter = "invert(1) hue-rotate(180deg)";
+    gameElement.style.transition = "filter 1s ease-in-out";
+  } else {
+    // Transition to day mode (normal colors)
+    gameElement.style.filter = "none";
+    gameElement.style.transition = "filter 1s ease-in-out";
   }
+}
+
+function checkDayNightCycle() {
+  // To solve problem-1: Check if we've reached a new 300-point milestone
+  // Hint: You need to call toggleDayNightCycle() function with appropriate condition
 }
 
 checkCollision();
