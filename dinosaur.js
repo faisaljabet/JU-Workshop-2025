@@ -4,11 +4,14 @@ let game = document.getElementById("game");
 let restartBtn = document.getElementById("restartBtn");
 
 let isJumping = false;
+let isDucking = false;
 let gravity = 0.9;
 let position = 0;
 let runFrame = 1;
+let duckFrame = 1;
 let runSpeed = 5;
 let runIntervalId = null;
+let duckIntervalId = null;
 let verticalVelocity = 0;
 let groundOffset = 0;
 let gameOver = false;
@@ -20,10 +23,21 @@ let isNightMode = false;
 let lastCycleScore = 0;
 let highestScore = 0;
 
-// Handle jump
+// Handle jump and duck
 document.addEventListener("keydown", function (event) {
-  if ((event.code === "Space" || event.code === "ArrowUp") && !gameOver) {
+  if (gameOver) return;
+
+  if (event.code === "Space" || event.code === "ArrowUp") {
     jump();
+  } else if (event.code === "ArrowLeft") { // To solve problem-3: write the correct condition in this line
+    startDucking();
+  }
+});
+
+// Handle keyup for ducking
+document.addEventListener("keyup", function (event) {
+  if (event.code === "ArrowLeft" && !gameOver) { // To solve problem-3: write the correct condition in this line
+    stopDucking();
   }
 });
 
@@ -49,6 +63,45 @@ function jump() {
 
     dino.style.bottom = position + "px";
   }, 20);
+}
+
+function startDucking() {
+  if (isDucking || gameOver) return;
+  isDucking = true;
+  stopRunAnimation();
+  startDuckAnimation();
+}
+
+function stopDucking() {
+  if (!isDucking || gameOver) return;
+  isDucking = false;
+  stopDuckAnimation();
+  startRunAnimation();
+}
+
+function startDuckAnimation() {
+  if (duckIntervalId !== null) return;
+  duckIntervalId = setInterval(() => {
+    if (gameOver || !isDucking) return;
+
+    duckFrame = duckFrame === 1 ? 2 : 1;
+    if (duckFrame === 1) {
+      dino.classList.add('duck1');
+      dino.classList.remove('duck2');
+    } else {
+      dino.classList.add('duck2');
+      dino.classList.remove('duck1');
+    }
+  }, 120);
+}
+
+function stopDuckAnimation() {
+  if (duckIntervalId !== null) {
+    clearInterval(duckIntervalId);
+    duckIntervalId = null;
+  }
+  // Remove duck classes
+  dino.classList.remove('duck1', 'duck2');
 }
 
 // Move tree
@@ -215,7 +268,6 @@ function toggleDayNightCycle() {
   const gameElement = document.getElementById("game");
   const dinoElement = document.getElementById("dino");
   const treeElement = document.getElementById("tree");
-  const lifeItemElement = document.getElementById("lifeItem"); 
 
   if (isNightMode) {
     // Transition to night mode (negative colors)
@@ -236,6 +288,7 @@ function restartGame() {
   position = 0;
   verticalVelocity = 0;
   isJumping = false;
+  isDucking = false;
   treePosition = 700;
   groundOffset = 0;
   isNightMode = false;
@@ -254,7 +307,8 @@ function restartGame() {
     gameOverText.remove();
   }
 
-  // Restart animations
+  // Stop any duck animations and restart run animation
+  stopDuckAnimation();
   startRunAnimation();
   startScore();
   updateScoreDisplay();
